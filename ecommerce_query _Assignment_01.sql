@@ -1,16 +1,8 @@
-create database ECOMMERCE_ASSIGNMENT_DB;
-GO
-
 use ECOMMERCE_ASSIGNMENT_DB;
 GO
--- TABLE CREATION
 
-drop table if exists OrderItem;
-drop table if exists Orders;
-drop table if exists Product;
-drop table if exists Seller;
-drop table if Exists Customer;
-
+-------Create Customer Table------
+  
 create table Customer
 (
 CustomerId int primary key identity,
@@ -23,6 +15,8 @@ IsActive bit default 1,
 CreatedDate datetime default getdate()
 );
 
+---------Create seller table-------
+
 create table Seller
 (
 SellerId int primary key identity,
@@ -33,6 +27,8 @@ City varchar(100),
 Rating decimal(2,1),
 IsActive bit default 1
 );
+
+----------Create Product Table---------
 
 create table Product
 (
@@ -49,6 +45,8 @@ foreign key(SellerId)
 references Seller(SellerId)
 );
 
+--------Create Orders table--------------
+
 create table Orders
 (
 OrderId int primary key identity,
@@ -62,6 +60,8 @@ constraint fk_orders_customer
 foreign key(CustomerId)
 references Customer(CustomerId)
 );
+
+-----------Create OrderItem Table---------
 
 create table OrderItem
 (
@@ -91,7 +91,6 @@ VALUES
 ('Sneha Reddy','sneha@gmail.com',9876543213,'Chennai','Velachery'),
 ('Akash Singh','akash@gmail.com',9876543214,'Mumbai','Andheri');
 
-
 INSERT INTO Seller
 (SellerName,Email,MobileNo,City,Rating)
 VALUES
@@ -99,7 +98,6 @@ VALUES
 ('Mobile Hub','mobilehub@gmail.com',9000000002,'Bangalore',4.2),
 ('Laptop Store','laptop@gmail.com',9000000003,'Hyderabad',4.7),
 ('Gadget Zone','gadget@gmail.com',9000000004,'Mumbai',4.1);
-
 
 INSERT INTO Product
 (ProductName,Category,Price,StockQuantity,SellerId)
@@ -122,7 +120,6 @@ VALUES
 (4,'UPI','Chennai'),
 (5,'Card','Mumbai');
 
-
 INSERT INTO OrderItem
 (OrderId,ProductId,Quantity,UnitPrice)
 VALUES
@@ -138,7 +135,6 @@ VALUES
 (5,6,2,12000);
 
 -- WHERE CLAUSE 
-
 SELECT * FROM Customer WHERE City='Chennai';
 
 SELECT * FROM Customer WHERE City<>'Chennai';
@@ -170,7 +166,6 @@ SELECT * FROM Customer WHERE City='Chennai' AND IsActive=1;
 SELECT * FROM Customer WHERE City<>'Hyderabad';
 
 --- GROUP BY QUESTIONS
-
 SELECT City,COUNT(CustomerId) AS TotalCustomers FROM Customer GROUP BY City;
 
 SELECT Category,COUNT(ProductId) AS TotalProducts FROM Product GROUP BY Category;
@@ -192,7 +187,6 @@ SELECT p.ProductName,SUM(oi.Quantity) AS TotalQuantitySold FROM Product p INNER 
 SELECT Category,COUNT(ProductId) AS TotalProducts FROM Product GROUP BY Category HAVING COUNT(ProductId)>1;
 
 --ORDER BY
-
 SELECT * FROM Product ORDER BY Price ASC;
 
 SELECT * FROM Product ORDER BY Price DESC;
@@ -240,7 +234,6 @@ SELECT s.SellerName,SUM(oi.Quantity*oi.UnitPrice) AS TotalSales FROM Seller s IN
 SELECT p.ProductName,SUM(oi.Quantity) AS TotalQuantitySold FROM Product p INNER JOIN OrderItem oi ON p.ProductId=oi.ProductId GROUP BY p.ProductName;
 
 --A.Basic subquery questions
-
 SELECT *
 FROM Product
 WHERE Price >
@@ -324,7 +317,6 @@ WHERE City='Bangalore'
 );
 
 --Subquery with IN / NOT IN
-
 SELECT *
 FROM Customer
 WHERE CustomerId IN
@@ -402,7 +394,6 @@ WHERE Category='Laptop'
 );
 
 --Subquery with Aggregate Functions
-
 SELECT *
 FROM Product
 WHERE Price =
@@ -457,8 +448,6 @@ GROUP BY o.OrderId
 ) AS TempTable
 );
 
-
-
 SELECT s.SellerId,
 s.SellerName,
 SUM(oi.Quantity * oi.UnitPrice) AS TotalSales
@@ -469,7 +458,6 @@ INNER JOIN OrderItem oi
 ON p.ProductId = oi.ProductId
 GROUP BY s.SellerId,s.SellerName
 HAVING SUM(oi.Quantity * oi.UnitPrice) > 50000;
-
 
 SELECT p.ProductId,
 p.ProductName,
@@ -489,8 +477,6 @@ GROUP BY ProductId
 ) AS TempTable
 );
 
-
-
 SELECT TOP 1
 c.CustomerId,
 c.CustomerName,
@@ -502,7 +488,6 @@ INNER JOIN OrderItem oi
 ON o.OrderId = oi.OrderId
 GROUP BY c.CustomerId,c.CustomerName
 ORDER BY TotalSpent DESC;
-
 
 SELECT TOP 1
 s.SellerId,
@@ -517,7 +502,6 @@ GROUP BY s.SellerId,s.SellerName
 ORDER BY TotalSales DESC;
 
 -- Correlated Subquery Questions
-
 SELECT *
 FROM Product p1
 WHERE Price >
@@ -527,7 +511,6 @@ FROM Product p2
 WHERE p1.Category = p2.Category
 );
 
-
 SELECT *
 FROM Product p1
 WHERE Price <
@@ -545,7 +528,6 @@ SELECT AVG(Price)
 FROM Product p2
 WHERE p1.Category = p2.Category
 );
-
 
 SELECT *
 FROM Customer c
@@ -555,7 +537,6 @@ SELECT COUNT(*)
 FROM Orders o
 WHERE c.CustomerId = o.CustomerId
 ) > 1;
-
 
 SELECT o.OrderId,
 SUM(oi.Quantity * oi.UnitPrice) AS OrderAmount
@@ -597,9 +578,7 @@ SELECT AVG(Price)
 FROM Product
 );
 
-
 --EXISTS / NOT R+EXISTS Questions
-
 SELECT *
 FROM Customer c
 WHERE EXISTS
@@ -636,7 +615,6 @@ FROM OrderItem oi
 WHERE p.ProductId = oi.ProductId
 );
 
-
 SELECT *
 FROM Seller s
 WHERE EXISTS
@@ -646,7 +624,6 @@ FROM Product p
 WHERE s.SellerId = p.SellerId
 );
 
-
 SELECT *
 FROM Seller s
 WHERE NOT EXISTS
@@ -655,7 +632,6 @@ SELECT *
 FROM Product p
 WHERE s.SellerId = p.SellerId
 );
-
 
 SELECT *
 FROM Customer c
@@ -671,7 +647,6 @@ WHERE c.CustomerId = o.CustomerId
 AND p.Category = 'Mobile'
 );
 
-
 SELECT *
 FROM Customer c
 WHERE NOT EXISTS
@@ -685,7 +660,6 @@ ON oi.ProductId = p.ProductId
 WHERE c.CustomerId = o.CustomerId
 AND p.Category = 'Laptop'
 );
-
 
 -- Stored Procedure Assignment Questions
 
@@ -717,14 +691,12 @@ SELECT * FROM Orders;
 END;
 EXEC sp_GetAllOrders;
 
-
 CREATE PROC sp_GetAllOrderItems
 AS
 BEGIN
 SELECT * FROM OrderItem;
 END;
 EXEC sp_GetAllOrderItems;
-
 
 -- stored Procedure with input Parameters
 
@@ -746,7 +718,6 @@ AS
 BEGIN
 SELECT * FROM Customer WHERE CustomerId=@CustomerId; 
 END;
-
 
 CREATE PROC sp_GetProductById
 @ProductId INT
@@ -811,7 +782,6 @@ BEGIN
 SELECT * FROM Product WHERE Price>@Price;
 END;
 
-
 --Insert Stored Procedure Questions
 
 CREATE PROC sp_InsertCustomer
@@ -844,7 +814,6 @@ VALUES
 (@SellerName,@Email,@MobileNo,@City,@Rating,@IsActive);
 END;
 
-
 CREATE PROC sp_InsertProduct
 @ProductName VARCHAR(100),
 @Category VARCHAR(100),
@@ -858,7 +827,6 @@ INSERT INTO Product
 VALUES
 (@ProductName,@Category,@Price,@StockQuantity,@SellerId);
 END;
-
 
 CREATE PROC sp_InsertOrder
 @CustomerId INT,
@@ -886,9 +854,7 @@ VALUES
 (@OrderId,@ProductId,@Quantity,@UnitPrice);
 END;
 
-
 --Update Stored Procedure Questions
-
 CREATE PROC sp_UpdateCustomerCity
 @CustomerId INT,
 @City VARCHAR(100)
@@ -899,7 +865,6 @@ SET City=@City
 WHERE CustomerId=@CustomerId;
 END;
 EXEC sp_UpdateCustomerCity 1,'Mumbai';
-
 
 CREATE PROC sp_UpdateCustomerMobile
 @CustomerId INT,
@@ -962,8 +927,6 @@ END;
 
 EXEC sp_UpdateCustomerCity 1,'Mumbai';
 
-
-
 -- 22. Create a stored procedure to update customer mobile number based on customer id
 
 CREATE PROC sp_UpdateCustomerMobile
@@ -979,8 +942,6 @@ WHERE CustomerId=@CustomerId;
 END;
 
 EXEC sp_UpdateCustomerMobile 1,9876500000;
-
-
 
 -- 23. Create a stored procedure to update product price based on product id
 
@@ -998,8 +959,6 @@ END;
 
 EXEC sp_UpdateProductPrice 1,85000;
 
-
-
 -- 24. Create a stored procedure to update product stock quantity based on product id
 
 CREATE PROC sp_UpdateProductStock
@@ -1016,8 +975,6 @@ END;
 
 EXEC sp_UpdateProductStock 1,20;
 
-
-
 -- 25. Create a stored procedure to update order status based on order id
 
 CREATE PROC sp_UpdateOrderStatus
@@ -1033,108 +990,6 @@ WHERE OrderId=@OrderId;
 END;
 
 EXEC sp_UpdateOrderStatus 1,'Delivered';
-
-
-CREATE PROC sp_UpdateSellerRating
-@SellerId INT,
-@Rating DECIMAL(2,1)
-AS
-BEGIN
-UPDATE Seller
-SET Rating=@Rating
-WHERE SellerId=@SellerId;
-END;
-EXEC sp_UpdateSellerRating 1,4.8;
-
-
--- 21. Create a stored procedure to update customer city based on customer id
-
-CREATE PROC sp_UpdateCustomerCity
-@CustomerId INT,
-@City VARCHAR(100)
-AS
-BEGIN
-
-UPDATE Customer
-SET City=@City
-WHERE CustomerId=@CustomerId;
-
-END;
-
-EXEC sp_UpdateCustomerCity 1,'Mumbai';
-
-
-
--- 22. Create a stored procedure to update customer mobile number based on customer id
-
-CREATE PROC sp_UpdateCustomerMobile
-@CustomerId INT,
-@MobileNo BIGINT
-AS
-BEGIN
-
-UPDATE Customer
-SET MobileNo=@MobileNo
-WHERE CustomerId=@CustomerId;
-
-END;
-
-EXEC sp_UpdateCustomerMobile 1,9876500000;
-
-
-
--- 23. Create a stored procedure to update product price based on product id
-
-CREATE PROC sp_UpdateProductPrice
-@ProductId INT,
-@Price MONEY
-AS
-BEGIN
-
-UPDATE Product
-SET Price=@Price
-WHERE ProductId=@ProductId;
-
-END;
-
-EXEC sp_UpdateProductPrice 1,85000;
-
-
-
--- 24. Create a stored procedure to update product stock quantity based on product id
-
-CREATE PROC sp_UpdateProductStock
-@ProductId INT,
-@StockQuantity INT
-AS
-BEGIN
-
-UPDATE Product
-SET StockQuantity=@StockQuantity
-WHERE ProductId=@ProductId;
-
-END;
-
-EXEC sp_UpdateProductStock 1,20;
-
-
-
--- 25. Create a stored procedure to update order status based on order id
-
-CREATE PROC sp_UpdateOrderStatus
-@OrderId INT,
-@OrderStatus VARCHAR(50)
-AS
-BEGIN
-
-UPDATE Orders
-SET OrderStatus=@OrderStatus
-WHERE OrderId=@OrderId;
-
-END;
-
-EXEC sp_UpdateOrderStatus 1,'Delivered';
-
 
 CREATE PROC sp_UpdateSellerRating
 @SellerId INT,
@@ -1163,8 +1018,6 @@ END;
 
 EXEC sp_UpdateCustomerCity 1,'Mumbai';
 
-
-
 -- 22. Create a stored procedure to update customer mobile number based on customer id
 
 CREATE PROC sp_UpdateCustomerMobile
@@ -1180,8 +1033,6 @@ WHERE CustomerId=@CustomerId;
 END;
 
 EXEC sp_UpdateCustomerMobile 1,9876500000;
-
-
 
 -- 23. Create a stored procedure to update product price based on product id
 
@@ -1199,6 +1050,96 @@ END;
 
 EXEC sp_UpdateProductPrice 1,85000;
 
+-- 24. Create a stored procedure to update product stock quantity based on product id
+
+CREATE PROC sp_UpdateProductStock
+@ProductId INT,
+@StockQuantity INT
+AS
+BEGIN
+
+UPDATE Product
+SET StockQuantity=@StockQuantity
+WHERE ProductId=@ProductId;
+
+END;
+
+EXEC sp_UpdateProductStock 1,20;
+
+-- 25. Create a stored procedure to update order status based on order id
+
+CREATE PROC sp_UpdateOrderStatus
+@OrderId INT,
+@OrderStatus VARCHAR(50)
+AS
+BEGIN
+
+UPDATE Orders
+SET OrderStatus=@OrderStatus
+WHERE OrderId=@OrderId;
+
+END;
+
+EXEC sp_UpdateOrderStatus 1,'Delivered';
+
+CREATE PROC sp_UpdateSellerRating
+@SellerId INT,
+@Rating DECIMAL(2,1)
+AS
+BEGIN
+UPDATE Seller
+SET Rating=@Rating
+WHERE SellerId=@SellerId;
+END;
+EXEC sp_UpdateSellerRating 1,4.8;
+
+-- 21. Create a stored procedure to update customer city based on customer id
+
+CREATE PROC sp_UpdateCustomerCity
+@CustomerId INT,
+@City VARCHAR(100)
+AS
+BEGIN
+
+UPDATE Customer
+SET City=@City
+WHERE CustomerId=@CustomerId;
+
+END;
+
+EXEC sp_UpdateCustomerCity 1,'Mumbai';
+
+-- 22. Create a stored procedure to update customer mobile number based on customer id
+
+CREATE PROC sp_UpdateCustomerMobile
+@CustomerId INT,
+@MobileNo BIGINT
+AS
+BEGIN
+
+UPDATE Customer
+SET MobileNo=@MobileNo
+WHERE CustomerId=@CustomerId;
+
+END;
+
+EXEC sp_UpdateCustomerMobile 1,9876500000;
+
+-- 23. Create a stored procedure to update product price based on product id
+
+CREATE PROC sp_UpdateProductPrice
+@ProductId INT,
+@Price MONEY
+AS
+BEGIN
+
+UPDATE Product
+SET Price=@Price
+WHERE ProductId=@ProductId;
+
+END;
+
+EXEC sp_UpdateProductPrice 1,85000;
 
 CREATE PROC sp_UpdateProductStock
 @ProductId INT,
@@ -1211,7 +1152,6 @@ WHERE ProductId=@ProductId;
 END;
 EXEC sp_UpdateProductStock 1,20;
 
-
 CREATE PROC sp_UpdateOrderStatus
 @OrderId INT,
 @OrderStatus VARCHAR(50)
@@ -1222,7 +1162,6 @@ SET OrderStatus=@OrderStatus
 WHERE OrderId=@OrderId;
 END;
 EXEC sp_UpdateOrderStatus 1,'Delivered';
-
 
 CREATE PROC sp_UpdateSellerRating
 @SellerId INT,
@@ -1267,8 +1206,6 @@ DELETE FROM Customer
 WHERE CustomerId=@CustomerId;
 END;
 EXEC sp_DeleteCustomer 1;
-
-
 
 CREATE PROC sp_DeleteSeller
 @SellerId INT
@@ -1323,7 +1260,6 @@ ON c.CustomerId=o.CustomerId;
 END;
 EXEC sp_CustomerWiseOrderDetails;
 
-
 CREATE PROC sp_SellerWiseProductDetails
 AS
 BEGIN
@@ -1338,7 +1274,6 @@ INNER JOIN Product p
 ON s.SellerId=p.SellerId;
 END;
 EXEC sp_SellerWiseProductDetails;
-
 
 CREATE PROC sp_OrderWiseProductDetails
 AS
@@ -1355,7 +1290,6 @@ INNER JOIN Product p
 ON oi.ProductId=p.ProductId;
 END;
 EXEC sp_OrderWiseProductDetails;
-
 
 CREATE PROC sp_CompleteOrderReport
 AS
@@ -1380,7 +1314,6 @@ ON p.SellerId=s.SellerId;
 END;
 EXEC sp_CompleteOrderReport;
 
-
 CREATE PROC sp_CustomerWiseTotalOrderAmount
 AS
 BEGIN
@@ -1395,7 +1328,6 @@ ON o.OrderId=oi.OrderId
 GROUP BY c.CustomerName;
 END;
 EXEC sp_CustomerWiseTotalOrderAmount;
-
 
 CREATE PROC sp_SellerWiseTotalSales
 AS
@@ -1438,7 +1370,6 @@ END;
 DECLARE @Count INT;
 EXEC sp_TotalCustomers @Count OUTPUT;
 SELECT @Count AS TotalCustomers;
-
 
 CREATE PROC sp_TotalProducts
 @TotalProducts INT OUTPUT
