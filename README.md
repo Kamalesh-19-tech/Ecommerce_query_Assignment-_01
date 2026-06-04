@@ -1,2 +1,0 @@
-# Ecommerce_query_Assignment-_01
-Ecommerce_query_Description
